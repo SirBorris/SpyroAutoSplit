@@ -15,42 +15,42 @@
 ///
 ///     Change log
 ///     v1.15: 
-///		- Updated Sorceress Last Hit function and added a memory pointer (This was painful :) )
+///			- Updated Sorceress Last Hit function and added a memory pointer (This was painful :) )
 ///    		- Fixed typo in Sgt Byrd Base causing autosplitter to not function
-///		- Added vars.storedMap for SRT3 boss battles using an extra variable to store the value "old.map" in the event of a null map. 
+///			- Added vars.storedMap for SRT3 boss battles using an extra variable to store the value "old.map" in the event of a null map. 
 ///
 ///     v1.15.1
-///         	- Added the war crime of three checks for each SRT 3 boss to remove issues in SRT 1 & 2. Will need fixing but for now it works.
+///         - Added the war crime of three checks for each SRT 3 boss to remove issues in SRT 1 & 2. Will need fixing but for now it works.
 ///
 ///     v1.16
-///        	- Removed the war crime in favour of another dictionary, improving performance (Thanks Banana for the assist!)
+///         - Removed the war crime in favour of another dictionary, improving performance (Thanks Banana for the assist!)
 ///
-///	v1.17
-///		- Located a pointer for cutscenes! This should remove loadless when cutscenes are playing, assuming we actually attach it to a process. This will need SRC mod approval before it is created
+///		v1.17
+///			- Located a pointer for cutscenes! This should remove loadless when cutscenes are playing, assuming we actually attach it to a process. This will need SRC mod approval before it is created
 ///
 ///
 /////////////////////////////////////////////////////////////////
 
 state("Spyro-Win64-Shipping")
 {
-   // Set to 0 when loading, set to 1 otherwise (foundable as a 4-byte searching for 256)
-   byte isNotLoading : 0x03415F30, 0xF8, 0x4A8, 0xE19;
+    // Set to 0 when loading, set to 1 otherwise (foundable as a 4-byte searching for 256)
+    byte isNotLoading : 0x03415F30, 0xF8, 0x4A8, 0xE19;
 
-   // Set to 0 in game, 1 if in menu, 15 if in graphics submenu
-   byte inMenu : 0x034160D0, 0x20, 0x218, 0x60;
+    // Set to 0 in game, 1 if in menu, 15 if in graphics submenu
+    byte inMenu : 0x034160D0, 0x20, 0x218, 0x60;
 
-   // Set to 0 in title screen and main menu, set to 1 everywhere else
-   byte inGame : 0x03415F30, 0xF0, 0x378, 0x564;
+    // Set to 0 in title screen and main menu, set to 1 everywhere else
+    byte inGame : 0x03415F30, 0xF0, 0x378, 0x564;
 
-   // Counts Ripto's 3rd phase health (init at 8 from the very beginning of Ripto 1 fight, can be frozen at 0 to end the fight)
-   byte healthRipto3 : 0x03415F30, 0x110, 0x50, 0x140, 0x8, 0x1D0, 0x134;    
+    // Counts Ripto's 3rd phase health (init at 8 from the very beginning of Ripto 1 fight, can be frozen at 0 to end the fight)
+    byte healthRipto3 : 0x03415F30, 0x110, 0x50, 0x140, 0x8, 0x1D0, 0x134;    
 
-   // Counts Sorceress's health (init at 10 from the very beginning of Sorc 1 fight, can be frozen at 0 to end the fight)
-   byte healthSorc2 : 0x03428760, 0xA8, 0x510, 0x58, 0x20, 0xF0, 0x3B0, 0xA28;
+    // Counts Sorceress's health (init at 10 from the very beginning of Sorc 1 fight, can be frozen at 0 to end the fight)
+    byte healthSorc2 : 0x03601278, 0x40, 0x58, 0x20, 0xB0, 0x90, 0x140, 0xA28;
 
-   // ID of the map the player is being in
-   string256 map : 0x03415F30, 0x138, 0xB0, 0xB0, 0x598, 0x210, 0xB8, 0x148, 0x190, 0x0;
-
+    // ID of the map the player is being in
+    string256 map : 0x03415F30, 0x138, 0xB0, 0xB0, 0x598, 0x210, 0xB8, 0x148, 0x190, 0x0;
+	
 	//ID of the cutscene currently being played, set to ?? if no cutscene is playing
 	//string256 CurrentCutscene : 0x03610178, 0x68, 0xC0, 0x50, 0x368, 0xA0, 0x98, 0x60;
 	
@@ -183,9 +183,9 @@ startup
     // This dictionary defines levels which are known to lead to a "null" level and thus will not split correctly. These levels are linked to 
     // the world that they lead back into - the assumption being this currently onlyoccurs for S3 Bosses
     vars.s3BossAutoSplitWhitelist = new Dictionary<string, string> {
-       { "/LS308_BuzzsDungeon/Maps/", "/LS310_MiddayGardens_Home/Maps/"    },
-       { "/LS317_SpikesArena/Maps/",  "/LS319_EveningLake_Home/Maps/"      },
-       { "/LS326_ScorchsPit/Maps/",   "/LS328_MidnightMountain_Home/Maps/" }
+       { "/LS308_BuzzsDungeon/Maps/", "/LS310_MiddayGardens_Home/Maps/" },
+       { "/LS317_SpikesArena/Maps/", "/LS319_EveningLake_Home/Maps/" },
+       { "/LS326_ScorchsPit/Maps/", "/LS328_MidnightMountain_Home/Maps/" }
     };
 
     // A variable which stores old.map for later use to help check the split for null levels
