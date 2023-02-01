@@ -15,18 +15,18 @@
 ///
 ///     Change log
 ///     v1.15: 
-///			- Updated Sorceress Last Hit function and added a memory pointer (This was painful :) )
+///		- Updated Sorceress Last Hit function and added a memory pointer (This was painful :) )
 ///    		- Fixed typo in Sgt Byrd Base causing autosplitter to not function
-///			- Added vars.storedMap for SRT3 boss battles using an extra variable to store the value "old.map" in the event of a null map. 
+///		- Added vars.storedMap for SRT3 boss battles using an extra variable to store the value "old.map" in the event of a null map. 
 ///
 ///     v1.15.1
-///         - Added the war crime of three checks for each SRT 3 boss to remove issues in SRT 1 & 2. Will need fixing but for now it works.
+///         	- Added the war crime of three checks for each SRT 3 boss to remove issues in SRT 1 & 2. Will need fixing but for now it works.
 ///
 ///     v1.16
-///         - Removed the war crime in favour of another dictionary, improving performance (Thanks Banana for the assist!)
+///        	- Removed the war crime in favour of another dictionary, improving performance (Thanks Banana for the assist!)
 ///
-///		v1.17
-///			- Located a pointer for cutscenes! This should remove loadless when cutscenes are playing, assuming we actually attach it to a process. This will need SRC mod approval before it is created
+///	v1.17
+///		- Located a pointer for cutscenes! This should remove loadless when cutscenes are playing, assuming we actually attach it to a process. This will need SRC mod approval before it is created
 ///
 ///
 /////////////////////////////////////////////////////////////////
@@ -367,8 +367,7 @@ split
 
 isLoading 
 {
-	
-	// Game must be loading something to pause the timer
+    // Game must be loading something to pause the timer
     if(current.isNotLoading != 0)
         return false;
 
