@@ -15,19 +15,19 @@
 ///
 ///     Change log
 ///     v1.15: 
-///			- Updated Sorceress Last Hit function and added a memory pointer (This was painful :) )
+///		- Updated Sorceress Last Hit function and added a memory pointer (This was painful :) )
 ///    		- Fixed typo in Sgt Byrd Base causing autosplitter to not function
-///			- Added vars.storedMap for SRT3 boss battles using an extra variable to store the value "old.map" in the event of a null map. 
+///		- Added vars.storedMap for SRT3 boss battles using an extra variable to store the value "old.map" in the event of a null map. 
 ///
 ///     v1.15.1
-///         - Added the war crime of three checks for each SRT 3 boss to remove issues in SRT 1 & 2. Will need fixing but for now it works.
+///        	- Added the war crime of three checks for each SRT 3 boss to remove issues in SRT 1 & 2. Will need fixing but for now it works.
 ///
 ///     v1.16
-///         - Removed the war crime in favour of another dictionary, improving performance (Thanks Banana for the assist!)
+///         	- Removed the war crime in favour of another dictionary, improving performance (Thanks Banana for the assist!)
 ///
-///		v1.17
-///			- Located a pointer for cutscenes! This should remove loadless when cutscenes are playing, assuming we actually attach it to a process. This will need SRC mod approval before it is created
-///			- Added new values to allow the balloonists to split between homeworlds. Note this only works for the standard route of levels (eg Artisans will only split to Peacekeepers). This also accounts for EBL. 
+///	v1.17.1
+///		- Located a pointer for cutscenes! This should remove loadless when cutscenes are playing, assuming we actually attach it to a process. This will need SRC mod approval before it is created
+///		- Added new values to allow the balloonists to split between homeworlds. Note this only works for the standard route of levels (eg Artisans will only split to Peacekeepers). This also accounts for EBL. 
 ///
 ///
 /////////////////////////////////////////////////////////////////
@@ -80,30 +80,30 @@ startup
     vars.maps = new Dictionary<string, Tuple<string,string>> {
         // Spyro 1 maps
         { "s1_artisan_home",            new Tuple<string,string>("/LS101_ArtisansHome/Maps/",       "Artisans Home")      },
-		{ "s1_stone_hill",              new Tuple<string,string>("/LS102_StoneHill/Maps/",          "Stone Hill")         },
+	{ "s1_stone_hill",              new Tuple<string,string>("/LS102_StoneHill/Maps/",          "Stone Hill")         },
         { "s1_dark_hollow",             new Tuple<string,string>("/LS103_DarkHollow/Maps/",         "Dark Hollow")        },
         { "s1_town_square",             new Tuple<string,string>("/LS104_Townsquare/Maps/",         "Town Square")        },
         { "s1_sunny_flight",            new Tuple<string,string>("/LS105_Sunnyflight/Maps/",        "Sunny Flight")       },
         { "s1_toasty",                  new Tuple<string,string>("/LS106_Toasty/Maps/",             "Toasty")             },
-		{ "s1_peacekeeper_home",        new Tuple<string,string>("/LS107_PeacekeeperHome/Maps/",    "Peacekeepers Home")  },
+	{ "s1_peacekeeper_home",        new Tuple<string,string>("/LS107_PeacekeeperHome/Maps/",    "Peacekeepers Home")  },
         { "s1_dry_canyon",              new Tuple<string,string>("/LS108_DryCanyon/Maps/",          "Dry Canyon")         },
         { "s1_cliff_town",              new Tuple<string,string>("/LS109_CliffTown/Maps/",          "Cliff Town")         },
         { "s1_ice_cavern",              new Tuple<string,string>("/LS110_IceCavern/Maps/",          "Ice Cavern")         },
         { "s1_night_flight",            new Tuple<string,string>("/LS111_NightFlight/Maps/",        "Night Flight")       },
         { "s1_doctor_shemp",            new Tuple<string,string>("/LS112_DrShemp/Maps/",            "Doctor Shemp")       },
-		{ "s1_magic_home",              new Tuple<string,string>("/LS113_MagicHome/Maps/",          "Magic Crafters Home")},
+	{ "s1_magic_home",              new Tuple<string,string>("/LS113_MagicHome/Maps/",          "Magic Crafters Home")},
         { "s1_alpine_ridge",            new Tuple<string,string>("/LS114_AlpineRidge/Maps/",        "Alpine Ridge")       },  
         { "s1_high_caves",              new Tuple<string,string>("/LS115_HighCaves/Maps/",          "High Caves")         },
         { "s1_wizard_peak",             new Tuple<string,string>("/LS116_WizardPeak/Maps/",         "Wizard Peak")        },
         { "s1_crystal_flight",          new Tuple<string,string>("/LS117_CrystalFlight/Maps/",      "Crystal Flight")     },       
         { "s1_blowhard",                new Tuple<string,string>("/LS118_Blowhard/Maps/",           "Blowhard")           },
-		{ "s1_beast_home",              new Tuple<string,string>("/LS119_BeastHome/Maps/",          "Beast Makers Home")  },
+	{ "s1_beast_home",              new Tuple<string,string>("/LS119_BeastHome/Maps/",          "Beast Makers Home")  },
         { "s1_terrace_village",         new Tuple<string,string>("/LS120_TerraceVillage/Maps/",     "Terrace Village")    },
         { "s1_misty_bog",               new Tuple<string,string>("/LS121_MistyBog/Maps/",           "Misty Bog")          },
         { "s1_tree_tops",               new Tuple<string,string>("/LS122_TreeTops/Maps/",           "Tree Tops")          },
         { "s1_wild_flight",             new Tuple<string,string>("/LS123_WildFlight/Maps/",         "Wild Flight")        },
         { "s1_metalhead",               new Tuple<string,string>("/LS124_MetalHead/Maps/",          "Metalhead")          },
-		{ "s1_dream_home",              new Tuple<string,string>("/LS125_DreamWeaverHome/Maps/",    "Dream Weaver Home")  },
+	{ "s1_dream_home",              new Tuple<string,string>("/LS125_DreamWeaverHome/Maps/",    "Dream Weaver Home")  },
         { "s1_dark_passage",            new Tuple<string,string>("/LS126_DarkPassage/Maps/",        "Dark Passage")       },
         { "s1_lofty_castle",            new Tuple<string,string>("/LS127_LoftyCastle/Maps/",        "Lofty Castle")       },
         { "s1_haunted_towers",          new Tuple<string,string>("/LS128_HauntedTowers/Maps/",      "Haunted Towers")     },
@@ -184,11 +184,11 @@ startup
         { "s2_crushs_dungeon",   "/LS210_AutumnPlains_Home/Maps/" },
         { "s2_gulps_overlook",   "/LS222_WinterTundra_Home/Maps/" },
         { "s2_riptos_arena",     "/LS229_DragonShores/Maps/"      },
-		{ "s1_artisan_home",     "/LS107_PeacekeeperHome/Maps/"   },
-	    { "s1_peacekeeper_home", "/LS113_MagicHome/Maps/"         },
-	    { "s1_magic_home",       "/LS119_BeastHome/Maps/"         },
-	    { "s1_beast_home",       "/LS125_DreamWeaverHome/Maps/"   },
-	    { "s1_dream_home",       "/LS131_GnastyHome/Maps/"        }
+	{ "s1_artisan_home",     "/LS107_PeacekeeperHome/Maps/"   },
+	{ "s1_peacekeeper_home", "/LS113_MagicHome/Maps/"         },
+	{ "s1_magic_home",       "/LS119_BeastHome/Maps/"         },
+	{ "s1_beast_home",       "/LS125_DreamWeaverHome/Maps/"   },
+	{ "s1_dream_home",       "/LS131_GnastyHome/Maps/"        }
     }; 
 
     // This dictionary defines levels which are known to lead to a "null" level and thus will not split correctly. These levels are linked to 
@@ -197,11 +197,11 @@ startup
        { "/LS308_BuzzsDungeon/Maps/",        "/LS310_MiddayGardens_Home/Maps/"    },
        { "/LS317_SpikesArena/Maps/" ,        "/LS319_EveningLake_Home/Maps/"      },
        { "/LS326_ScorchsPit/Maps/",          "/LS328_MidnightMountain_Home/Maps/" },
-	   { "/LS101_ArtisansHome/Maps/",        "/LS107_PeacekeeperHome/Maps/"       },
-	   { "/LS107_PeacekeeperHome/Maps/",     "/LS113_MagicHome/Maps/"             },
-	   { "/LS113_MagicHome/Maps/",           "/LS119_BeastHome/Maps/"             },
-	   { "/LS119_BeastHome/Maps/",           "/LS125_DreamWeaverHome/Maps/"       },
-	   { "/LS125_DreamWeaverHomeHome/Maps/", "/LS131_GnastyHome/Maps/"            }
+       { "/LS101_ArtisansHome/Maps/",        "/LS107_PeacekeeperHome/Maps/"       },
+       { "/LS107_PeacekeeperHome/Maps/",     "/LS113_MagicHome/Maps/"             },
+       { "/LS113_MagicHome/Maps/",           "/LS119_BeastHome/Maps/"             },
+       { "/LS119_BeastHome/Maps/",           "/LS125_DreamWeaverHome/Maps/"       },
+       { "/LS125_DreamWeaverHomeHome/Maps/", "/LS131_GnastyHome/Maps/"            }
     };
 
     // A variable which stores old.map for later use to help check the split for null levels
