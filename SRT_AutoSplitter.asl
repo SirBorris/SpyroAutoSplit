@@ -201,7 +201,7 @@ startup
        { "/LS107_PeacekeeperHome/Maps/",     "/LS113_MagicHome/Maps/"             },
        { "/LS113_MagicHome/Maps/",           "/LS119_BeastHome/Maps/"             },
        { "/LS119_BeastHome/Maps/",           "/LS125_DreamWeaverHome/Maps/"       },
-       { "/LS125_DreamWeaverHomeHome/Maps/", "/LS131_GnastyHome/Maps/"            }
+       { "/LS125_DreamWeaverHome/Maps/",     "/LS131_GnastyHome/Maps/"            }
     };
 
     // A variable which stores old.map for later use to help check the split for null levels
