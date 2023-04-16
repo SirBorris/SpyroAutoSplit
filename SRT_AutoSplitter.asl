@@ -1,34 +1,48 @@
 /////////////////////////////////////////////////////////////////
 ///
-///     Spyro Reignited Trilogy Autosplitter v1.17.1
+///     Spyro Reignited Trilogy Autosplitter v1.20
 ///   
 /////////////////////////////////////////////////////////////////
 ///
 ///     Author: Dinopony (@DinoponyRuns)
 ///     Updated by: SirBorris (@TheSirBorris) & Bored_Banana (@BoredBanana1) (v1.15 Onwards)
 ///     Special thanks to:
-///        - CptBrian for his precious knowledge about UE4 games structure and his work unifying pointers
-///        - Zic3 for helping finding RAM addresses
-///        - All the Spyro community for being helpful and supportive in the process of making this beast :)
+///      - CptBrian for his precious knowledge about UE4 games structure and his work unifying pointers
+///      - Zic3 for helping finding RAM addresses
+///      - All the Spyro community for being helpful and supportive in the process of making this beast :)
 ///
 /////////////////////////////////////////////////////////////////
 ///
 ///     Change log
 ///     v1.15: 
-///		- Updated Sorceress Last Hit function and added a memory pointer (This was painful :) )
-///    		- Fixed typo in Sgt Byrd Base causing autosplitter to not function
-///		- Added vars.storedMap for SRT3 boss battles using an extra variable to store the value "old.map" in the event of a null map. 
+///	- Updated Sorceress Last Hit function and added a memory pointer (This was painful :) )
+///    	- Fixed typo in Sgt Byrd Base causing autosplitter to not function
+///	- Added vars.storedMap for SRT3 boss battles using an extra variable to store the value "old.map" in the event of a null map. 
 ///
 ///     v1.15.1
-///        	- Added the war crime of three checks for each SRT 3 boss to remove issues in SRT 1 & 2. Will need fixing but for now it works.
+///     - Added the war crime of three checks for each SRT 3 boss to remove issues in SRT 1 & 2. Will need fixing but for now it works.
 ///
 ///     v1.16
-///         	- Removed the war crime in favour of another dictionary, improving performance (Thanks Banana for the assist!)
+///     - Removed the war crime in favour of another dictionary, improving performance (Thanks Banana for the assist!)
 ///
-///	v1.17.1
-///		- Located a pointer for cutscenes! This should remove loadless when cutscenes are playing, assuming we actually attach it to a process. This will need SRC mod approval before it is created
-///		- Added new values to allow the balloonists to split between homeworlds. Note this only works for the standard route of levels (eg Artisans will only split to Peacekeepers). This also accounts for EBL. 
+///	v1.17
+///	- Located a pointer for cutscenes! This should remove loadless when cutscenes are playing, assuming we actually attach it to a process. This will need SRC mod approval before it is created
+///     - Added new values to allow the balloonists to split between homeworlds. Note this only works for the standard route of levels (eg Artisans will only split to Peacekeepers). This also accounts for EBL.
 ///
+/// 	v1.18
+///  	- Added last hit to SBR Sorceress
+///
+///     v1.19
+///     - Added the delay_start setting for s3 to remove the intro cutscenes from the loadless timer. Infulstructre for removing cutscene times from s1 and s2 are primed but need more research and moderator approval.
+///
+///     v1.20
+///     - Removed setting for delaying start of s3 as it is not default for all 3 games
+///     - Forced Game Time to be 0:00 until the start of a run
+///     - Added Pointers for "SelectedGame" and "GainedControl" (Needs wider user testing)
+///     - Added isLoading condition that looks at if a file has gained control within the selected file
+///     - Moved variable initalization of alreadyTriggeredSplits, lastLevelExitTimestamp, and initGameTimeZero from init to startup
+///     - This is to prevent resetting this values when the game is closed and reopened
+///     - init runs whenever the game is opened, startup is run whenever the autosplitter is loaded
 ///
 /////////////////////////////////////////////////////////////////
 
@@ -48,17 +62,24 @@ state("Spyro-Win64-Shipping")
 
     // Counts Sorceress's health (init at 10 from the very beginning of Sorc 1 fight, can be frozen at 0 to end the fight)
     byte healthSorc2 : 0x03601278, 0x40, 0x58, 0x20, 0xB0, 0x90, 0x140, 0xA28;
+	
+	// Counts SBR Sorceress's health (init at 15 from the very beginning of SBR, can be frozen at 0 to end the fight)
+    byte healthSorcSBR : 0x03630078, 0x270, 0x630, 0x4F8, 0xD30, 0xD0, 0x8A0, 0xB28;
 
     // ID of the map the player is being in
     string256 map : 0x03415F30, 0x138, 0xB0, 0xB0, 0x598, 0x210, 0xB8, 0x148, 0x190, 0x0;
 	
 	//ID of the cutscene currently being played, set to ?? if no cutscene is playing
-	//string256 CurrentCutscene : 0x03610178, 0x68, 0xC0, 0x50, 0x368, 0xA0, 0x98, 0x60;
+	string256 CurrentCutscene : 0x03610178, 0x68, 0xC0, 0x50, 0x368, 0xA0, 0x98, 0x60;
 	
 	// ID of how many areas have been entered, used to remove opening cutscenes from timing (SRT3 only)
-	//byte RenderCount : 0x031DB390, 0x8, 0x78, 0x8, 0x2D0, 0x2E0, 0x8, 0x28;
+	byte RenderCount : 0x031DB390, 0x8, 0x78, 0x8, 0x2D0, 0x2E0, 0x8, 0x28;
+
+    // 0 on Tile Screen/File Select
+    byte SelectedGame : 0x03415F30, 0xF8, 0x290, 0x0, 0x1F8;
 	
-	//ID for SBR Sorceress in SRT 3
+    // Changes from 0 to 1 once Spyro can Move
+    byte GainedControl : 0x03415F30, 0xF8, 0x478
 }
 
 /* Old unstable pointer values found, may be useful if anybody has a problem with current ones
@@ -201,14 +222,22 @@ startup
        { "/LS107_PeacekeeperHome/Maps/",     "/LS113_MagicHome/Maps/"             },
        { "/LS113_MagicHome/Maps/",           "/LS119_BeastHome/Maps/"             },
        { "/LS119_BeastHome/Maps/",           "/LS125_DreamWeaverHome/Maps/"       },
-       { "/LS125_DreamWeaverHome/Maps/",     "/LS131_GnastyHome/Maps/"            }
+       { "/LS125_DreamWeaverHome/Maps/",     "/LS131_GnastyHome/Maps/"         	  }
     };
 
     // A variable which stores old.map for later use to help check the split for null levels
     vars.storedMap = null;
 
+    vars.startedLoadlessRun_s1 = false;
+    vars.startedLoadlessRun_s2 = false;
+    vars.startedLoadlessRun_s3 = false;
+
+    vars.alreadyTriggeredSplits = new HashSet<string>();
+    vars.lastLevelExitTimestamp = 0;
+    vars.initGameTimeZero = true;
+
     settings.Add("reset", false, "Reset timer on title screen");
-    settings.Add("ignore_fast_exits", true, "Ignore fast exits (time spent in level < 15s)");
+    settings.Add("ignore_fast_exits", true, "Ignore fast exits (time spent in level < 15s)");  
 
     settings.Add("s1", true, "Spyro the Dragon");
         settings.Add("s1_first", true, "Level exits (first time)", "s1");
@@ -219,12 +248,13 @@ startup
         settings.Add("s2_first", true, "Level exits (first time)", "s2");
         settings.Add("s2_everytime", true, "Level exits (every time)", "s2");
         settings.Add("s2_enter_ripto", false, "Enter Ripto's Arena", "s2");
-        settings.Add("s2_kill_ripto", true, "Ripto (on last blow) [EXPERIMENTAL]", "s2");
+        settings.Add("s2_kill_ripto", true, "Ripto (on last blow)", "s2");
 
     settings.Add("s3", true, "Spyro: Year of the Dragon");
         settings.Add("s3_first", true, "Level exits (first time)", "s3");
         settings.Add("s3_everytime", true, "Level exits (every time)", "s3");
         settings.Add("s3_kill_sorceress", true, "Sorceress (on last blow)", "s3");
+	settings.Add("s3_kill_SBR_sorceress", false, "SBR Sorceress (on last blow) [EXPERIMENTAL]", "s3");
 
     // Initialize settings for autosplits from the map list
     foreach(KeyValuePair<string, Tuple<string,string>> entry in vars.maps)
@@ -253,26 +283,53 @@ init
         print("Spyro Reignited Trilogy ASL started (unknown game version)");
     }
 
-    vars.alreadyTriggeredSplits = new HashSet<string>();
-    vars.lastLevelExitTimestamp = 0;
 }
 
 update
 {
-//  print("isNotLoading = " + current.isNotLoading.ToString());
-//  print("inMenu = " + current.inMenu.ToString());
-//  print("inGame = " + current.inGame.ToString());
-//  print("healthRipto3 = " + current.healthRipto3.ToString())
-//  print("healthSorc2 = " + current.healthSorc2.ToString())
-//  print("map = " + current.map.ToString());
+    
+    // print("isNotLoading = " + current.isNotLoading.ToString());
+    // print("inMenu = " + current.inMenu.ToString());
+    // print("Empty Menu = " + (current.inMenu == null).ToString());
+    // print("inGame = " + current.inGame.ToString());
+    // print("healthRipto3 = " + current.healthRipto3.ToString())
+    // print("healthSorc2 = " + current.healthSorc2.ToString())
+    // print("map = " + current.map.ToString());
+    // print("Selected Game = " + current.SelectedGame.ToString());
+    // print("cutscene = " + current.CurrentCutscene.ToString());
+    // print("render count = " + current.RenderCount.ToString());
+    // print("starting S3 = " + vars.startingS3.ToString());
+    // print("--------------------------------------");
+
+
+    // GainedControl changes from 0 to 1 once you load into a level
+    // It is only used here to detect first control
+    if(current.GainedControl == 1 && old.GainedControl == 0) {
+        if(!vars.startedLoadlessRun_s1 && current.SelectedGame == 1) {
+            vars.startedLoadlessRun_s1 = true;
+        }
+
+        if(!vars.startedLoadlessRun_s2 && current.SelectedGame == 2) {
+            vars.startedLoadlessRun_s2 = true;
+        }
+
+        if(!vars.startedLoadlessRun_s3 && current.SelectedGame == 3) {
+            vars.startedLoadlessRun_s3 = true;
+        }
+    }
 }
 
 start
 {
+    vars.initGameTimeZero = true;
+
     if(current.inGame == 1 && old.inGame == 0)
     {
         vars.alreadyTriggeredSplits.Clear();
         vars.lastLevelExitTimestamp = 0;
+        vars.startedLoadlessRun_s1 = false;
+        vars.startedLoadlessRun_s2 = false;
+        vars.startedLoadlessRun_s3 = false;
         return true;
     }
     
@@ -281,6 +338,7 @@ start
 
 reset
 {
+    
     return settings["reset"] && current.inGame == 0;
 }
 
@@ -382,12 +440,27 @@ split
             return true;
     }
     
-    return false;
+	// Sorceress SBR (last blow) specific handling
+    if(current.map == vars.maps["s3_super_bonus"].Item1) 
+    {
+		if(settings["s3_kill_SBR_sorceress"] && old.healthSorcSBR == 1 && current.healthSorcSBR == 0)
+            return true;
+    }
+    
+	return false;
 }
 
 isLoading 
 {
+    // if a new file has been selected, pause the timer. vars.startedLoadlessRun_sX is true after loading into that game
+    if((!vars.startedLoadlessRun_s1 && current.SelectedGame == 1) || (!vars.startedLoadlessRun_s2 && current.SelectedGame == 2) || (!vars.startedLoadlessRun_s3 && current.SelectedGame == 3)) {
+        return true;
+    }
 	
+    // if(!vars.startedLoadlessRun_s3 && settings["delay_s3_start"] && (current.map == "/LS301_SunriseSpring_Home/Maps/" || vars.storedMap == "/LS301_SunriseSpring_Home/Maps/")) {
+    //     return true;
+    // }
+
 	// Game must be loading something to pause the timer
     if(current.isNotLoading != 0)
         return false;
@@ -404,3 +477,11 @@ isLoading
 
     return true;
 }
+
+gameTime {
+    if(vars.initGameTimeZero) {
+        vars.initGameTimeZero = false;
+        return TimeSpan.Zero;
+    }
+}
+
